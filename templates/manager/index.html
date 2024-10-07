@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Task </title>
+
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link href="https://unpkg.com/aos@next/dist/aos.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body class="text-gray-700 w-full mx-auto bg-gradient-to-r from-blue-100 to-blue-50">
+
+    <nav class="bg-gradient-to-r from-blue-500 to-purple-500 text-white py-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <h1 class="text-4xl font-bold">Manager  Task</h1>
+            <a href="#" class="flex items-center">
+                <i id="logout" class="fa-solid fa-right-from-bracket rotate-180 text-2xl"></i>
+                <span class="ml-2 font-semibold">Logout</span>
+            </a>
+        </div>
+    </nav>
+
+
+    <div class="container mx-auto mt-8 p-6">
+
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-10" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="text-3xl font-bold text-indigo-600 mb-4">Add New Task</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-4">
+
+                    <div class="col-span-1">
+                        <div class="">
+                            <label for="task" class="block text-sm font-medium text-gray-700 mb-1">Task</label>
+                            {{ form.task }}
+                        </div>
+  
+                        <div>
+                            <label for="staff" class="block text-sm font-medium text-gray-700 mb-1 mt-2">Staff</label>
+                            {{ form.staff }}
+                        </div>
+                    </div>
+
+                    <div class="col-span-1">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+
+                <button type="submit" class="mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold py-2 px-4 rounded-lg hover:from-indigo-600 hover:to-purple-600 transform transition-transform duration-300 hover:scale-105">
+                    Save Task
+                </button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-10" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="text-2xl font-bold text-indigo-600 mb-4">Staff Completed Tasks</h2>
+            {% if alltasks %}
+            <ul class="space-y-4">
+                {% for item in alltasks %}
+                <li class="bg-blue-100 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <div>
+                        <p class="text-xl font-semibold">{{ item.task }}</p>
+                        <p class="text-sm text-gray-500">{{ item.staff.user.first_name }} {{ item.staff.user.last_name }}</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="{% url 'manager:delete_item' item.id %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-600">No Done Items</p>
+            {% endif %}
+        </div>
+
+
+        <div class="bg-white rounded-lg shadow-xl p-6 mb-10" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="text-2xl font-bold text-indigo-600 mb-4">Pending Staff Tasks</h2>
+            {% if tasks %}
+            <ul class="space-y-4">
+                {% for item in tasks %}
+                <li class="bg-yellow-100 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <div>
+                        <p class="text-xl font-semibold">{{ item.task }}</p>
+                        <p class="text-sm text-gray-500">{{ item.staff.user.first_name }} {{ item.staff.user.last_name }}</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="{% url 'manager:delete_item' item.id %}" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                            <i class="fa fa-trash"></i> Delete
+                        </a>
+                        <a href="{% url 'manager:item_verified' item.id %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition duration-300">
+                            <i class="fa fa-check-circle"></i> Verify
+                        </a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-600">No Pending Tasks</p>
+            {% endif %}
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl p-6" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="text-2xl font-bold text-indigo-600 mb-4">Verified Tasks</h2>
+            {% if verifiedtasks %}
+            <ul class="space-y-4">
+                {% for item in verifiedtasks %}
+                <li class="bg-green-100 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <div>
+                        <p class="text-xl font-semibold">{{ item.task }}</p>
+                        <p class="text-sm text-gray-500">{{ item.staff.user.first_name }} {{ item.staff.user.last_name }}</p>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-600">No Verified Tasks</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script src="{% static 'web/js/script.js' %}"></script>
+</body>
+</html>
